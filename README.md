@@ -346,3 +346,7 @@ along with the appropriate HTTP status code:
 ```json
 { "errors": ["validation errors"] }
 ```
+
+
+Flask-SQLAlchemy = "2.5.1" -> *
+weukzeuk 2.2.2 -> *

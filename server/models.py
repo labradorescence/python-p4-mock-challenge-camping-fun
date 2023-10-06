@@ -80,6 +80,9 @@ class Signup(db.Model, SerializerMixin):
     # Add relationships
     camper_id = db.Column(db.Integer, db.ForeignKey("campers.id"))
     activity_id = db.Column(db.Integer, db.ForeignKey("activities.id"))
+
+    # camp = db.relationship("Camper", backref="signups")
+    # activity = db.relationship("Activity", backref="signups")
     
     # Add serialization rules
     serialize_rules = ("-camper.signups", "-activity.signups", )
@@ -87,6 +90,7 @@ class Signup(db.Model, SerializerMixin):
     # Add validation
     @validates('time')
     def validate_time(self, key, time):
+        import ipdb; ipdb.set_trace()
         if not 0 <= time <= 23:
             raise ValueError(" Time must be     between 0 and 23")
         return time
