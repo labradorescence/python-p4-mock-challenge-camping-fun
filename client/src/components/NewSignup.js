@@ -12,6 +12,8 @@ function NewSignup({ camperId, onAddSignup }) {
       .then(setActivities);
   }, []);
 
+  
+
   function handleSubmit(e) {
     e.preventDefault();
     const formData = {
