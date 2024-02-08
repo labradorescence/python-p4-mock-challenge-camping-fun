@@ -25,8 +25,13 @@ class Activity(db.Model, SerializerMixin):
     difficulty = db.Column(db.Integer)
 
     # Add relationship
+    signups = db.relationship("Signup",
+                              cascade="all, delete",
+                              back_populates="activity"
+                            )
 
     # Add serialization rules
+    serialize_rules = ("-signups.activity", )
 
     def __repr__(self):
         return f'<Activity {self.id}: {self.name}>'
@@ -40,10 +45,25 @@ class Camper(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
 
     # Add relationship
+    signups = db.relationship("Signup", 
+                              back_populates="camper",
+                              cascade="all, delete")
    
     # Add serialization rules
+    serialize_rules = ("-signups.camper", )
 
     # Add validation
+    @validates('name', 'age')
+    def validate_attribute(self, key, value):
+        print( f' checking {key} validation ')
+        if key == 'name':
+            if not value or len(value) < 1:
+                raise ValueError("Camper must have a name")
+            return value 
+        if key == 'age':
+            if not 8 <= value <= 18:
+                raise ValueError("Age must be between 8 and 18")
+            return value
 
 
     def __repr__(self):
@@ -57,11 +77,23 @@ class Signup(db.Model, SerializerMixin):
     time = db.Column(db.Integer)
 
     # Add relationships
+    activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))
+    camper_id = db.Column(db.Integer, db.ForeignKey('campers.id'))
+
+    activity = db.relationship("Activity",
+                               back_populates="signups")
+    camper = db.relationship("Camper",
+                             back_populates="signups")
    
     # Add serialization rules
+    serialize_rules = ("-activity.signups", "-camper.signups", )
    
     # Add validation
-
+    @validates('time')
+    def validate_time(self, key, time):
+        if not 0 <= time <=23:
+            raise ValueError("time must be between 0 and 23--- :D")
+        return time
 
     def __repr__(self):
         return f'<Signup {self.id}>'
